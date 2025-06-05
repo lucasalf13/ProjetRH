@@ -1,0 +1,10 @@
+model Employe{
+    id Int @id @default(autoincrement())
+    lastName String
+    firstName String
+    mail String @unique
+    password String
+    pc Pc?
+    chefId Int
+    chef Chef @relation(fields: [chefId], references: [id])
+}

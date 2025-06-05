@@ -1,0 +1,45 @@
+{% extends "../layouts/base.twig" %}
+
+{% block style %}
+	<link rel="stylesheet" href="/assets/css/style.css"/>
+{% endblock %}
+
+{% block title %}
+	<title>{{title}}</title>
+{% endblock %}
+
+{% block main %}
+	<main>
+		<section>
+			<div>
+				<h2>
+					{% if pc %}Modifier un pc{% else %}Ajouter un pc
+					{% endif %}
+				</h2>
+				<form action={% if pc %} "/pc/edit/{{ pc.id }}" {% else %} "/addpc" {% endif %} method="post">
+					<div>
+						<label for="adresseMac">Adresse MAC</label>
+						<input type="text" name="adresseMac" id="adresseMac" value="{{ pc.adresseMac }}">
+					</div>
+					<div>
+						<label for="employeId">Employé</label>
+						<select name="employeId" id="employeId">
+							<option value="">Sélectionner un employé</option>
+							{% for employe in employes %}
+								<option value="{{ employe.id }}" {% if pc.employeId == employe.id %} selected {% endif %}>
+									{{ employe.firstName }}
+									{{ employe.lastName }}
+								</option>
+							{% endfor %}
+						</select>
+					</div>
+					<button>
+						{% if pc %}Modifier{% else %}Ajouter
+						{% endif %}
+					</button>
+						<a href="/" class="btn">Retour</a>
+				</div>
+			</form>
+		</div>
+	</section>
+</main>{% endblock %}

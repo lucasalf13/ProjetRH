@@ -1,0 +1,38 @@
+{% extends "../layouts/base.twig" %}
+
+{% block style %}
+	<link rel="stylesheet" href="/assets/css/style.css"/>
+{% endblock %}
+
+{% block title %}
+	<title>{{title}}</title>
+{% endblock %}
+
+{% block main %}
+	<main>
+		<section>
+			<div>
+				<h2>
+					{% if employe %}Modifier un employé{% else %}Ajouter un employé
+					{% endif %}
+				</h2>
+				<form action="{% if employe %}/employe/edit/{{ employe.id }}{% else %}/addemploye{% endif %}" method="post">
+					<label for="firstName">Prénom</label>
+					<input type="text" name="firstName" value="{{ employe.firstName}}">
+					<label for="lastName">Nom</label>
+					<input type="text" name="lastName" value="{{ employe.lastName }}">
+					<label for="mail">Email</label>
+					<input type="email" name="mail" value="{{ employe.mail}}">
+					<label for="password">Mot de passe</label>
+					<input type="password" name="password">
+					<button>
+						{% if employe %}Modifier{% else %}Ajouter
+						{% endif %}
+					</button>
+						<a href="/" class="btn">Retour</a>
+					
+				</form>
+			</div>
+		</section>
+	</main>
+{% endblock %}

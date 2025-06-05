@@ -1,0 +1,8 @@
+model Pc{
+    id Int @id @default(autoincrement())
+    adresseMac String @unique
+    chefId Int
+    chef Chef? @relation(fields: [chefId], references: [id])
+    employeId Int? @unique
+    employe Employe? @relation(fields: [employeId], references: [id])
+}

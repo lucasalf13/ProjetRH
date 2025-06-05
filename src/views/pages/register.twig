@@ -1,0 +1,37 @@
+{% extends "../layouts/base.twig" %}
+
+{% block style %}
+	<link rel="stylesheet" href="/assets/css/style.css"/>
+{% endblock %}
+
+{% block title %}
+	<title>Site RH</title>
+{% endblock %}
+
+{% block main %}
+	<main>
+		<section>
+			<h2>Formulaire d'inscription</h2>
+			<form action="" method="post">
+				<div>
+					<label for="raisonSociale">Votre raison sociale</label>
+					<input type="text" id="raisonSociale" name="raisonSociale">
+				</div>
+				<div>
+					<label for="siret">Votre siret</label>
+					<input type="text" id="siret" name="siret">
+				</div>
+				<div>
+					<label for="password">Votre mot de passe</label>
+					<input type="password" id="password" name="password">
+				</div>
+				<div>
+					<label for="confirmPassword">Confirmez votre mot de passe</label>
+					<input type="password" id="confirmPassword" name="confirmPassword">
+					<p>{{error.confirmPassword}}</p>
+				</div>
+				<button>S'inscrire</button>
+			</form>
+		</section>
+	</main>
+{% endblock %}

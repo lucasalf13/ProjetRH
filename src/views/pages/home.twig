@@ -1,0 +1,73 @@
+{% extends "../layouts/base.twig" %}
+
+{% block style %}
+	<link rel="stylesheet" href="/assets/css/style.css"/>
+{% endblock %}
+
+{% block title %}
+	<title>Accueil</title>
+{% endblock %}
+
+{% block main %}
+	<main>
+		<section>
+			<h2>Bienvenue
+				{{ chef.raisonSociale }}</h2>
+			<div>
+				<p>Vous êtes maintenant connecté!</p>
+			</div>
+
+			<h3>Ordinateurs</h3>
+			<table>
+				<thead>
+					<tr>
+						<th>Adresse Mac</th>
+						<th>Employé</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for pc in chef.pcs %}
+						<tr>
+							<td>{{ pc.adresseMac }}</td>
+							<td>
+								{% if pc.employe %}
+									{{ pc.employe.firstName }}
+									{{ pc.employe.lastName }} 🔴
+								{% else %}
+									Disponible 🟢
+								{% endif %}
+							</td>
+							<td>
+								<a href="/pc/edit/{{ pc.id }}">Modifier</a>
+								<a href="/pc/delete/{{ pc.id }}">Supprimer</a>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			<h3>Employés</h3>
+			<table>
+				<thead>
+					<tr>
+						<th>Prénom</th>
+						<th>Nom</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for employe in chef.employes %}
+						<tr>
+							<td>{{ employe.firstName }}</td>
+							<td>{{ employe.lastName }}</td>
+							<td>
+								<a href="/employe/edit/{{ employe.id }}">Modifier</a>
+								<a href="/employe/delete/{{ employe.id }}">Supprimer</a>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</section>
+	</main>
+{% endblock %}
