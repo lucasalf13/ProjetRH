@@ -2,6 +2,9 @@
 
 {% block style %}
 	<link rel="stylesheet" href="/assets/css/style.css"/>
+	 <link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet">
+    <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
+   <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.7/index.global.min.js'></script>
 {% endblock %}
 
 {% block title %}
@@ -16,7 +19,7 @@
 			<div>
 				<p>Vous êtes maintenant connecté!</p>
 			</div>
-
+<div id="map" style="width: 100%; height: 300px;"></div>
 			<h3>Ordinateurs</h3>
 			<table>
 				<thead>
@@ -68,6 +71,210 @@
 					{% endfor %}
 				</tbody>
 			</table>
+			<div id="calendar" style="width: 100%; height: 100px; margin-top: 40px;"></div>
+			<div id="eventModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3 id="modalTitle">Ajouter/Modifier un événement</h3>
+        <form id="eventForm">
+            <label for="eventTitle">Titre de l'événement :</label>
+            <input type="text" id="eventTitle" name="eventTitle" required>
+            <input type="hidden" id="eventId">
+            <button type="submit">Enregistrer</button>
+            <button type="button" id="deleteEvent" style="display: none;">Supprimer</button>
+        </form>
+    </div>
+</div>
 		</section>
 	</main>
+<script>
+    const pcs = {{ chef.pcs | json_encode | raw }};
+
+  document.addEventListener('DOMContentLoaded', async function () {
+        const map = new maplibregl.Map({
+            container: 'map', // ID du conteneur
+            style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json', // Style de la carte
+            center: [5.36978, 43.296482], // Coordonnées initiales (Marseille)
+            zoom: 10 // Niveau de zoom initial
+        });
+
+        // Fonction pour générer des coordonnées aléatoires dans Marseille
+        function generateRandomCoordinates() {
+            const latitude = (Math.random() * (43.35 - 43.25) + 43.25).toFixed(6);
+            const longitude = (Math.random() * (5.45 - 5.35) + 5.35).toFixed(6);
+            return [parseFloat(longitude), parseFloat(latitude)];
+        }
+
+        // Récupère les positions sauvegardées dans localStorage
+        const savedPositions = JSON.parse(localStorage.getItem('pcPositions')) || {};
+
+        // Ajout des marqueurs uniquement pour les ordinateurs occupés
+        pcs.forEach(pc => {
+            if (pc.employe) { // Vérifie si l'ordinateur est occupé
+                let coordinates;
+
+                // Si les coordonnées sont déjà sauvegardées dans localStorage, utilisez-les
+                if (savedPositions[pc.id]) {
+                    coordinates = savedPositions[pc.id];
+                } else if (pc.longitude && pc.latitude) {
+                    // Si les coordonnées existent déjà dans les données, utilisez-les
+                    coordinates = [pc.longitude, pc.latitude];
+                } else {
+                    // Sinon, générez des coordonnées aléatoires
+                    coordinates = generateRandomCoordinates();
+                    // Sauvegardez les coordonnées dans localStorage
+                    savedPositions[pc.id] = coordinates;
+                }
+
+                // Ajoutez un marqueur pour cet ordinateur
+                new maplibregl.Marker()
+                    .setLngLat(coordinates)
+                    .setPopup(new maplibregl.Popup().setHTML(`
+                        <strong>Adresse MAC:</strong> ${pc.adresseMac}<br>
+                        <strong>Employé:</strong> ${pc.employe.firstName} ${pc.employe.lastName}
+                    `)) // Popup avec l'adresse MAC et l'employé
+                    .addTo(map);
+            }
+        });
+
+        // Sauvegarde les positions mises à jour dans localStorage
+        localStorage.setItem('pcPositions', JSON.stringify(savedPositions));
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+        var modal = document.getElementById('eventModal');
+        var closeModalButton = document.querySelector('.close'); // Bouton de fermeture
+        var eventForm = document.getElementById('eventForm');
+        var eventTitleInput = document.getElementById('eventTitle');
+        var eventIdInput = document.getElementById('eventId');
+        var deleteEventButton = document.getElementById('deleteEvent');
+        var selectedEvent = null;
+
+        // Fonction pour sauvegarder les événements dans localStorage
+        function saveEventsToLocalStorage(events) {
+            localStorage.setItem('calendarEvents', JSON.stringify(events));
+        }
+
+        // Fonction pour charger les événements depuis localStorage
+        function loadEventsFromLocalStorage() {
+            const events = localStorage.getItem('calendarEvents');
+            return events ? JSON.parse(events) : [];
+        }
+
+        if (calendarEl) {
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                locale: 'fr',
+                editable: true, // Permet de déplacer les événements
+                selectable: true,
+                dayHeaderFormat: { weekday: 'long' },
+                events: loadEventsFromLocalStorage(), // Charger les événements depuis localStorage
+                dateClick: function (info) {
+                    openModal();
+                    eventTitleInput.value = '';
+                    eventIdInput.value = '';
+                    deleteEventButton.style.display = 'none';
+                    selectedEvent = { start: info.dateStr };
+                },
+                eventClick: function (info) {
+                    openModal();
+                    eventTitleInput.value = info.event.title;
+                    eventIdInput.value = info.event.id;
+                    deleteEventButton.style.display = 'inline-block';
+                    selectedEvent = info.event;
+                },
+                eventDrop: function (info) {
+                    // Sauvegarder les événements après un déplacement
+                    const events = calendar.getEvents().map(event => ({
+                        id: event.id,
+                        title: event.title,
+                        start: event.startStr,
+                        end: event.endStr,
+                        allDay: event.allDay
+                    }));
+                    saveEventsToLocalStorage(events);
+                }
+            });
+
+            calendar.render();
+
+            // Gestion de la soumission du formulaire
+            eventForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const title = eventTitleInput.value;
+
+                if (selectedEvent.id) {
+                    // Modifier un événement existant
+                    selectedEvent.setProp('title', title);
+                } else {
+                    // Ajouter un nouvel événement
+                    const newEvent = {
+                        id: String(Date.now()), // Génère un ID unique basé sur le timestamp
+                        title: title,
+                        start: selectedEvent.start,
+                        allDay: true
+                    };
+                    calendar.addEvent(newEvent);
+                }
+
+                // Sauvegarder les événements dans localStorage
+                const events = calendar.getEvents().map(event => ({
+                    id: event.id,
+                    title: event.title,
+                    start: event.startStr,
+                    end: event.endStr,
+                    allDay: event.allDay
+                }));
+                saveEventsToLocalStorage(events);
+
+                closeModal();
+            });
+
+            // Gestion de la suppression d'un événement
+            deleteEventButton.addEventListener('click', function () {
+                if (selectedEvent) {
+                    selectedEvent.remove();
+
+                    // Sauvegarder les événements dans localStorage
+                    const events = calendar.getEvents().map(event => ({
+                        id: event.id,
+                        title: event.title,
+                        start: event.startStr,
+                        end: event.endStr,
+                        allDay: event.allDay
+                    }));
+                    saveEventsToLocalStorage(events);
+                }
+                closeModal();
+            });
+
+            // Fermer la modale en cliquant sur le bouton "X"
+            closeModalButton.addEventListener('click', function () {
+                closeModal();
+            });
+
+            // Fermer la modale en cliquant en dehors de la modale
+            window.addEventListener('click', function (event) {
+                if (event.target == modal) {
+                    closeModal();
+                }
+            });
+
+            function openModal() {
+                modal.style.display = 'block';
+            }
+
+            function closeModal() {
+                modal.style.display = 'none';
+            }
+        }
+    });
+</script>
 {% endblock %}
