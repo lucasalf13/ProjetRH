@@ -12,22 +12,34 @@
 	<main>
 		<section>
 			<div>
-				<h2>Page de connexion</h2>
+				<h2>Page de Connexion</h2>
 			</div>
 			<div>
 				<form action="" method="post">
 					<div>
-						<label for="siret">Votre siret</label>
+						<label for="siret">Votre Siret</label>
 						<input type="text" name="siret" id="siret"></input>
 				</div>
-				<p>{{error.siret}}</p>
 				<div>
-					<label for="password">Votre mot de passe</label>
+					<label for="password">Votre Mot de Passe</label>
 					<input type="password" name="password" id="password"></input>
 			</div>
-			<p>{{error.password}}</p>
+			{% if error %}
+    <div class="error-message">
+        {% if error.message %}
+            <p>{{ error.message }}</p>
+        {% endif %}
+        {% if error.siret %}
+            <p>{{ error.siret }}</p>
+        {% endif %}
+        {% if error.password %}
+            <p>{{ error.password }}</p>
+        {% endif %}
+    </div>
+{% endif %}
+
 			<div>
-				<button type="submit">Se connecter</button>
+				<button type="submit">Se Connecter</button>
 			</div>
 		</form>
 	</div>

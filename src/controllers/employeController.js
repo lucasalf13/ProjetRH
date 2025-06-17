@@ -40,7 +40,7 @@ exports.getEditEmploye = async (req, res) => {
         const employe = await prisma.employe.findUnique({
             where: { id: parseInt(req.params.id) }
         });
-        res.render('pages/addemploye.twig', { employe });
+        res.render('pages/addemploye.twig', { employe, chef: req.session.chef });
     } catch (error) {
         res.redirect('/');
     }

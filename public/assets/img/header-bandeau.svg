@@ -1,0 +1,5 @@
+<svg width="1920" height="180" viewBox="0 0 1920 180" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+  <rect width="1920" height="180" fill="#007bff"/>
+  <path d="M0 120 Q480 180 960 140 Q1440 100 1920 160 V180 H0V120Z" fill="#ffffff" fill-opacity="0.18"/>
+  <path d="M0 150 Q600 110 960 170 Q1320 230 1920 130 V180 H0V150Z" fill="#e3f2fd" fill-opacity="0.4"/>
+</svg>

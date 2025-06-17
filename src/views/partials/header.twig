@@ -2,13 +2,14 @@
     <link rel="stylesheet" href="/assets/css/style.css" />
 {% endblock %}
 
-<header>
+<header class="header-banner">
+  <img src="/assets/img/header-bandeau.svg" alt="Bandeau RH" class="header-illustration">
     <nav>
         <ul>
             {% if chef %}
-                <li><a href="/logout">Déconnexion</a></li>
-                <li><a href="/addpc">Ajouter un pc</a></li>
-                <li><a href="/addemploye">Ajouter un employé</a></li>
+                <li><a href="/logout">⭕ Déconnexion</a></li>
+                <li><a href="/addpc">Ajouter un Ordinateur ➕</a></li>
+                <li><a href="/addemploye">➕ Ajouter un Employé</a></li>
             {% else %}
                 <li><a href="/register">Inscription</a></li>
                 <li><a href="/login">Connexion</a></li>

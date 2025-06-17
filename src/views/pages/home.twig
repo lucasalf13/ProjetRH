@@ -15,13 +15,16 @@
 	<main>
 		<section>
 			<h2>Bienvenue
-				{{ chef.raisonSociale }}</h2>
+				{{ chef.raisonSociale }} 👋</h2>
 			<div>
-				<p>Vous êtes maintenant connecté!</p>
+				<p>Vous êtes connecté sur votre espace RH !</p>
 			</div>
 <div id="map" style="width: 100%; height: 300px;"></div>
-			<h3>Ordinateurs</h3>
-			<table>
+<hr>
+			<h3>Liste des Ordinateurs 🖥️</h3>
+                        <input type="text" id="searchBarPc" placeholder="Rechercher un ordinateur...">
+
+			<table id="pcTable">
 				<thead>
 					<tr>
 						<th>Adresse Mac</th>
@@ -41,16 +44,18 @@
 									Disponible 🟢
 								{% endif %}
 							</td>
-							<td>
-								<a href="/pc/edit/{{ pc.id }}">Modifier</a>
-								<a href="/pc/delete/{{ pc.id }}">Supprimer</a>
+							<td class="actions">
+								<a href="/pc/edit/{{ pc.id }}"><img src="/assets/img/modifier-lutilisateur.png" alt="Modifier">Modifier</a>
+								<a href="/pc/delete/{{ pc.id }}"><img src="/assets/img/supprimer-le-compte.png" alt="Supprimer">Supprimer</a>
 							</td>
 						</tr>
 					{% endfor %}
 				</tbody>
 			</table>
-			<h3>Employés</h3>
-			<table>
+            <hr>
+			<h3>Liste des Employés 🧑‍💼</h3>
+            <input type="text" id="searchBarEmploye" placeholder="Rechercher un employé...">
+			<table id="employeTable">
 				<thead>
 					<tr>
 						<th>Prénom</th>
@@ -63,14 +68,15 @@
 						<tr>
 							<td>{{ employe.firstName }}</td>
 							<td>{{ employe.lastName }}</td>
-							<td>
-								<a href="/employe/edit/{{ employe.id }}">Modifier</a>
-								<a href="/employe/delete/{{ employe.id }}">Supprimer</a>
+							<td class="actions">
+								<a href="/employe/edit/{{ employe.id }}"><img src="/assets/img/modifier-lutilisateur.png" alt="Modifier">Modifier</a>
+								<a href="/employe/delete/{{ employe.id }}"><img src="/assets/img/supprimer-le-compte.png" alt="Supprimer">Supprimer</a>
 							</td>
 						</tr>
 					{% endfor %}
 				</tbody>
 			</table>
+            <hr>
 			<div id="calendar" style="width: 100%; height: 100px; margin-top: 40px;"></div>
 			<div id="eventModal" class="modal" style="display: none;">
     <div class="modal-content">
@@ -275,6 +281,49 @@
                 modal.style.display = 'none';
             }
         }
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchBarEmploye = document.getElementById('searchBarEmploye');
+        const employeTable = document.getElementById('employeTable');
+        const tableRows = employeTable.querySelectorAll('tbody tr');
+
+        searchBarEmploye.addEventListener('input', function () {
+            const searchTerm = searchBarEmploye.value.toLowerCase();
+
+            tableRows.forEach(row => {
+                const firstName = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+                const lastName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+
+                if (firstName.startsWith(searchTerm) || lastName.startsWith(searchTerm)) {
+                    row.style.display = ''; // Affiche la ligne
+                } else {
+                    row.style.display = 'none'; // Cache la ligne
+                }
+            });
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchBarPc = document.getElementById('searchBarPc');
+        const pcTable = document.getElementById('pcTable');
+        const tableRows = pcTable.querySelectorAll('tbody tr');
+
+        searchBarPc.addEventListener('input', function () {
+            const searchTerm = searchBarPc.value.toLowerCase();
+
+            tableRows.forEach(row => {
+                const macAddress = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+
+                if (macAddress.includes(searchTerm)) {
+                    row.style.display = ''; // Affiche la ligne
+                } else {
+                    row.style.display = 'none'; // Cache la ligne
+                }
+            });
+        });
     });
 </script>
 {% endblock %}

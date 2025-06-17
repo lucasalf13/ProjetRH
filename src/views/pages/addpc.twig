@@ -13,7 +13,7 @@
 		<section>
 			<div>
 				<h2>
-					{% if pc %}Modifier un pc{% else %}Ajouter un pc
+					{% if pc %}Modifier un Ordinateur 🖥️{% else %}Ajouter un Ordinateur 🖥️
 					{% endif %}
 				</h2>
 				<form action={% if pc %} "/pc/edit/{{ pc.id }}" {% else %} "/addpc" {% endif %} method="post">

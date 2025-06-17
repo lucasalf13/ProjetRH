@@ -48,7 +48,7 @@ exports.getEditPc = async (req, res) => {
                 ]
             }
         });
-        res.render('pages/addpc.twig', { pc, employes });
+        res.render('pages/addpc.twig', { pc, employes, chef: req.session.chef }); // Envoie le pc et la liste des employés
     } catch (error) {
         res.redirect('/');
     }

@@ -11,26 +11,45 @@
 {% block main %}
 	<main>
 		<section>
-			<h2>Formulaire d'inscription</h2>
+			<h2>Formulaire d'Inscription</h2>
 			<form action="" method="post">
 				<div>
-					<label for="raisonSociale">Votre raison sociale</label>
+					<label for="raisonSociale">Votre Raison Sociale</label>
 					<input type="text" id="raisonSociale" name="raisonSociale">
 				</div>
 				<div>
-					<label for="siret">Votre siret</label>
+					<label for="siret">Votre Siret</label>
 					<input type="text" id="siret" name="siret">
 				</div>
 				<div>
-					<label for="password">Votre mot de passe</label>
+					<label for="password">Votre Mot de Passe</label>
 					<input type="password" id="password" name="password">
 				</div>
 				<div>
-					<label for="confirmPassword">Confirmez votre mot de passe</label>
+					<label for="confirmPassword">Confirmez votre Mot de Passe</label>
 					<input type="password" id="confirmPassword" name="confirmPassword">
-					<p>{{error.confirmPassword}}</p>
 				</div>
-				<button>S'inscrire</button>
+				{% if error %}
+    <div class="error-message">
+        {% if error.message %}
+            <p>{{ error.message }}</p>
+        {% endif %}
+        {% if error.raisonSociale %}
+            <p>{{ error.raisonSociale }}</p>
+        {% endif %}
+        {% if error.siret %}
+            <p>{{ error.siret }}</p>
+        {% endif %}
+        {% if error.password %}
+            <p>{{ error.password }}</p>
+        {% endif %}
+        {% if error.confirmPassword %}
+            <p>{{ error.confirmPassword }}</p>
+        {% endif %}
+    </div>
+{% endif %}
+
+				<button>S'Inscrire</button>
 			</form>
 		</section>
 	</main>
